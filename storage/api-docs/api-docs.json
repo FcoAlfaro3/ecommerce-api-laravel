@@ -1,0 +1,710 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API E-commerce Segura con Swagger Completo",
+        "description": "API RESTful para la gestión de un e-commerce: registro y autenticación de clientes mediante tokens, catálogo de productos, creación de órdenes de compra y procesamiento de pagos con Stripe.",
+        "contact": {
+            "email": "soporte@ecommerce-api.test"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Servidor local de desarrollo"
+        }
+    ],
+    "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Registrar un nuevo cliente",
+                "description": "Crea una cuenta de cliente y devuelve un token de acceso listo para usar en las rutas protegidas.",
+                "operationId": "8e4e3cb7b46126f4696379d3c7eeb4ad",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Juan Pérez"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuario registrado exitosamente."
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|nQqq9Y7z..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación (ej. correo ya registrado)"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Iniciar sesión",
+                "description": "Autentica a un cliente con su correo y contraseña, y devuelve un nuevo token de acceso.",
+                "operationId": "222b2625838e3c57e017987f73598fda",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inicio de sesión exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Inicio de sesión exitoso."
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "2|kLpP3fA..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales incorrectas"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Cerrar sesión",
+                "description": "Revoca el token de acceso utilizado en la petición actual.",
+                "operationId": "ad65cbbd4e9f201619eae184a5961a98",
+                "responses": {
+                    "200": {
+                        "description": "Sesión cerrada exitosamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Obtener el usuario autenticado",
+                "description": "Devuelve los datos del cliente propietario del token enviado.",
+                "operationId": "8367feff40ba10e43187792cad3132c1",
+                "responses": {
+                    "200": {
+                        "description": "Datos del usuario autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders": {
+            "get": {
+                "tags": [
+                    "Órdenes"
+                ],
+                "summary": "Historial de compras del usuario autenticado",
+                "description": "Devuelve las órdenes del cliente autenticado, ordenadas de la más reciente a la más antigua.",
+                "operationId": "955bb77a45ae173a485fadb8befed93f",
+                "responses": {
+                    "200": {
+                        "description": "Listado paginado de órdenes del cliente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Órdenes"
+                ],
+                "summary": "Crear una orden de compra",
+                "description": "Crea una orden a partir de una lista de productos y cantidades. Valida el stock disponible, descuenta el inventario, guarda una fotografía (snapshot) del nombre y precio de cada producto, y crea un PaymentIntent en Stripe por el total de la orden. La respuesta incluye el \"client_secret\" necesario para confirmar el pago desde un frontend, o puede confirmarse directamente desde el endpoint POST /api/orders/{order}/confirm-payment.",
+                "operationId": "2123ba58dadb22bd6f2c8081af562230",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "items"
+                                ],
+                                "properties": {
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Orden creada exitosamente, incluye client_secret de Stripe"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "422": {
+                        "description": "Error de validación o stock insuficiente"
+                    },
+                    "502": {
+                        "description": "Error al comunicarse con Stripe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{order}": {
+            "get": {
+                "tags": [
+                    "Órdenes"
+                ],
+                "summary": "Detalle de una orden propia",
+                "description": "Devuelve el detalle completo (ítems y pago) de una orden que pertenezca al cliente autenticado.",
+                "operationId": "8114ac185cc1bf301d8862617e497098",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID de la orden",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle de la orden"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "La orden pertenece a otro cliente"
+                    },
+                    "404": {
+                        "description": "Orden no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{order}/confirm-payment": {
+            "post": {
+                "tags": [
+                    "Órdenes",
+                    "Pagos"
+                ],
+                "summary": "Confirmar o sincronizar el pago de una orden",
+                "description": "Si se envía \"payment_method\" (ej. un token de prueba de Stripe como \"pm_card_visa\"), confirma el PaymentIntent directamente desde la API — útil para probar el flujo completo desde Swagger UI sin un frontend. Si se omite, simplemente sincroniza el estado local con el estado actual del PaymentIntent en Stripe (útil cuando la confirmación ya ocurrió en el cliente vía Stripe.js).",
+                "operationId": "dda8f9cc2370e626ba92e67b8fa267ba",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID de la orden",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "payment_method": {
+                                        "description": "Token de método de pago de prueba de Stripe. Opcional.",
+                                        "type": "string",
+                                        "example": "pm_card_visa"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pago confirmado o sincronizado exitosamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "402": {
+                        "description": "El pago fue rechazado por Stripe"
+                    },
+                    "403": {
+                        "description": "La orden pertenece a otro cliente"
+                    },
+                    "404": {
+                        "description": "Orden o pago no encontrado"
+                    },
+                    "422": {
+                        "description": "La orden ya fue procesada previamente"
+                    },
+                    "502": {
+                        "description": "Error al comunicarse con Stripe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Listado público del catálogo de productos",
+                "description": "Devuelve los productos activos, con paginación y búsqueda opcional por nombre o descripción. No requiere autenticación.",
+                "operationId": "d97d1c3727cbac49708b85f7d11f7d58",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Texto a buscar en nombre o descripción",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de resultados por página (por defecto 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado paginado de productos"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Crear un producto",
+                "description": "Crea un nuevo producto en el catálogo. Requiere un token de un usuario administrador.",
+                "operationId": "785644b7d7dd38af4b51dafd0fbc1b6d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "stock"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Laptop HP Pavilion 15"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Laptop de 15 pulgadas, 16GB RAM, 512GB SSD"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 699.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 25
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://ejemplo.com/laptop.jpg"
+                                    },
+                                    "active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Producto creado exitosamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "No autorizado (se requiere rol de administrador)"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/products/{product}": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Detalle de un producto",
+                "description": "Devuelve la información completa de un producto por su identificador. No requiere autenticación.",
+                "operationId": "db00b523e69d5dbc09c6edad76374bdc",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle del producto"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Actualizar un producto",
+                "description": "Actualiza parcial o totalmente un producto existente. Requiere un token de un usuario administrador.",
+                "operationId": "f47cf55f4f3e0b134b5e7d9a8373725d",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Laptop HP Pavilion 15 (2026)"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Actualización de memoria a 32GB RAM"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 749.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 18
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://ejemplo.com/laptop.jpg"
+                                    },
+                                    "active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Producto actualizado exitosamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "No autorizado (se requiere rol de administrador)"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Eliminar un producto",
+                "description": "Elimina un producto del catálogo. Requiere un token de un usuario administrador.",
+                "operationId": "ac878db81fdb1333b21fc79e574a5a17",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Producto eliminado exitosamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "No autorizado (se requiere rol de administrador)"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/stripe/webhook": {
+            "post": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "Webhook de Stripe (uso exclusivo de Stripe)",
+                "description": "Endpoint invocado directamente por Stripe para notificar eventos de pago (payment_intent.succeeded, payment_intent.payment_failed). La firma de la petición se verifica con STRIPE_WEBHOOK_SECRET. No requiere autenticación de usuario, pero sí una firma válida de Stripe. No debe invocarse manualmente.",
+                "operationId": "2ca16d2f99bc06cb8a0075bb4dbf33a6",
+                "responses": {
+                    "200": {
+                        "description": "Evento procesado correctamente"
+                    },
+                    "400": {
+                        "description": "Firma de webhook inválida o payload malformado"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Token obtenido en /api/register o /api/login. Enviar como: Authorization: Bearer {token}",
+                "bearerFormat": "Sanctum Personal Access Token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autenticación",
+            "description": "Registro, inicio de sesión y gestión de la sesión del cliente"
+        },
+        {
+            "name": "Productos",
+            "description": "Catálogo de productos del e-commerce"
+        },
+        {
+            "name": "Órdenes",
+            "description": "Creación y consulta del historial de órdenes de compra"
+        },
+        {
+            "name": "Pagos",
+            "description": "Procesamiento y confirmación de pagos con Stripe"
+        }
+    ]
+}
