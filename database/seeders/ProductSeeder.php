@@ -7,92 +7,103 @@ use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
+    /**
+     * Catálogo de zapatería: tenis, zapatos formales y botas.
+     * Las imágenes son fotos gratuitas de Unsplash.
+     */
     public function run(): void
     {
+        $img = fn (string $id) => "https://images.unsplash.com/{$id}?auto=format&fit=crop&w=1000&q=80";
+
         $products = [
+            // Tenis
             [
-                'name' => 'Laptop HP Pavilion 15',
-                'description' => 'Laptop de 15.6", Intel Core i5, 16GB RAM, 512GB SSD.',
-                'price' => 699.99,
-                'stock' => 25,
-                'image_url' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853',
-            ],
-            [
-                'name' => 'Mouse Inalámbrico Logitech M170',
-                'description' => 'Mouse óptico inalámbrico con conexión USB, 1000 DPI.',
-                'price' => 14.99,
-                'stock' => 120,
-                'image_url' => 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46',
-            ],
-            [
-                'name' => 'Teclado Mecánico RGB',
-                'description' => 'Teclado mecánico con switches azules e iluminación RGB personalizable.',
-                'price' => 49.99,
-                'stock' => 60,
-                'image_url' => 'https://images.unsplash.com/photo-1587829741301-dc798b83add3',
-            ],
-            [
-                'name' => 'Monitor Samsung 24" Full HD',
-                'description' => 'Monitor LED de 24 pulgadas, resolución 1920x1080, 75Hz.',
-                'price' => 129.99,
-                'stock' => 40,
-                'image_url' => 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf',
-            ],
-            [
-                'name' => 'Audífonos Bluetooth Sony WH-CH520',
-                'description' => 'Audífonos inalámbricos con hasta 50 horas de batería.',
-                'price' => 59.99,
-                'stock' => 80,
-                'image_url' => 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
-            ],
-            [
-                'name' => 'Disco SSD NVMe 1TB',
-                'description' => 'Unidad de estado sólido NVMe con velocidades de lectura de hasta 3500MB/s.',
-                'price' => 79.99,
-                'stock' => 70,
-                'image_url' => 'https://images.unsplash.com/photo-1591405351990-4726e331f141',
-            ],
-            [
-                'name' => 'Webcam Full HD 1080p',
-                'description' => 'Cámara web con micrófono integrado, ideal para videollamadas.',
-                'price' => 34.99,
-                'stock' => 55,
-                'image_url' => 'https://images.unsplash.com/photo-1587826080692-f439465e2f13',
-            ],
-            [
-                'name' => 'Silla Ergonómica de Oficina',
-                'description' => 'Silla ergonómica con soporte lumbar ajustable y reposabrazos.',
-                'price' => 189.99,
-                'stock' => 15,
-                'image_url' => 'https://images.unsplash.com/photo-1580480055273-228ff5388ef8',
-            ],
-            [
-                'name' => 'Impresora Multifuncional HP DeskJet',
-                'description' => 'Impresora, escáner y copiadora a color con conexión Wi-Fi.',
-                'price' => 89.99,
+                'name' => 'Tenis Runner Rojo',
+                'description' => 'Tenis para correr con malla transpirable, suela con amortiguación y diseño ligero para entrenar todos los días.',
+                'price' => 74.99,
                 'stock' => 30,
-                'image_url' => 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6',
+                'image_url' => $img('photo-1542291026-7eec264c27ff'),
             ],
             [
-                'name' => 'Power Bank 20000mAh',
-                'description' => 'Batería portátil de carga rápida con doble puerto USB.',
-                'price' => 24.99,
-                'stock' => 100,
-                'image_url' => 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5',
+                'name' => 'Tenis Running Blanco y Naranja',
+                'description' => 'Tenis deportivos blancos con detalles naranja, suela flexible y talón reforzado.',
+                'price' => 79.99,
+                'stock' => 18,
+                'image_url' => $img('photo-1560769629-975ec94e6a86'),
             ],
             [
-                'name' => 'Smartwatch Deportivo',
-                'description' => 'Reloj inteligente con monitor de ritmo cardíaco y GPS.',
-                'price' => 99.99,
-                'stock' => 45,
-                'image_url' => 'https://images.unsplash.com/photo-1523275335684-37898b6baf30',
+                'name' => 'Tenis Casual Café',
+                'description' => 'Tenis de estilo casual en color café, cómodos para caminar y fáciles de combinar con jeans.',
+                'price' => 54.99,
+                'stock' => 22,
+                'image_url' => $img('photo-1549298916-b41d501d3772'),
             ],
             [
-                'name' => 'Router Wi-Fi 6 Dual Band',
-                'description' => 'Router de alta velocidad con cobertura de hasta 150m².',
-                'price' => 69.99,
+                'name' => 'Tenis Verde Olivo',
+                'description' => 'Tenis casuales en verde olivo con suela blanca de goma, ligeros y resistentes.',
+                'price' => 49.99,
+                'stock' => 3,
+                'image_url' => $img('photo-1539185441755-769473a23570'),
+            ],
+            [
+                'name' => 'Tenis Blanco Perforado',
+                'description' => 'Tenis blanco con paneles laterales perforados que dejan respirar el pie. Limpio y versátil.',
+                'price' => 64.99,
+                'stock' => 25,
+                'image_url' => $img('photo-1608231387042-66d1773070a5'),
+            ],
+            [
+                'name' => 'Tenis Blanco Clásico Bajo',
+                'description' => 'El clásico tenis blanco de corte bajo, todo en un color, para usar con cualquier ropa.',
+                'price' => 89.99,
                 'stock' => 35,
-                'image_url' => 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8',
+                'image_url' => $img('photo-1579338559194-a162d19bf842'),
+            ],
+            [
+                'name' => 'Tenis Negro de Cuero',
+                'description' => 'Tenis de cuero negro con detalle blanco en el costado y suela cómoda para todo el día.',
+                'price' => 84.99,
+                'stock' => 20,
+                'image_url' => $img('photo-1543508282-6319a3e2621f'),
+            ],
+
+            // Zapatos formales
+            [
+                'name' => 'Zapato Formal Negro',
+                'description' => 'Zapato de vestir negro con acabado pulido, ideal para la oficina y eventos formales.',
+                'price' => 109.99,
+                'stock' => 15,
+                'image_url' => $img('photo-1668069226492-508742b03147'),
+            ],
+            [
+                'name' => 'Mocasín de Cuero Café',
+                'description' => 'Mocasín café para caballero, sin agujetas, de cuero suave y suela cómoda.',
+                'price' => 99.99,
+                'stock' => 12,
+                'image_url' => $img('photo-1533867617858-e7b97e060509'),
+            ],
+            [
+                'name' => 'Zapato de Vestir Café',
+                'description' => 'Zapato de vestir en cuero café brillante con agujetas, para trajes y ocasiones especiales.',
+                'price' => 119.99,
+                'stock' => 10,
+                'image_url' => $img('photo-1563434649554-58f91d22ec2c'),
+            ],
+
+            // Botas
+            [
+                'name' => 'Bota de Cuero Café con Agujetas',
+                'description' => 'Bota de cuero café con agujetas, suela gruesa y buen agarre para uso diario.',
+                'price' => 139.99,
+                'stock' => 10,
+                'image_url' => $img('photo-1608256246200-53e635b5b65f'),
+            ],
+            [
+                'name' => 'Bota de Cuero Negra',
+                'description' => 'Bota negra de cuero con acabado pulido, fácil de combinar con ropa casual o formal.',
+                'price' => 149.99,
+                'stock' => 8,
+                'image_url' => $img('photo-1605732440685-d0654d81aa30'),
             ],
         ];
 

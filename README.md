@@ -1,6 +1,6 @@
 # API E-commerce Segura con Swagger Completo
 
-API RESTful construida con **Laravel 12** para gestionar un e-commerce básico: clientes registrados, catálogo de productos y procesamiento de compras mediante **Stripe**. Incluye autenticación por tokens (Laravel Sanctum), documentación interactiva con **Swagger / OpenAPI** y manejo consistente de errores en formato JSON.
+API RESTful construida con **Laravel 12** para una zapatería en línea: registro de clientes, catálogo de productos (tenis, zapatos formales y botas) y procesamiento de compras mediante **Stripe**. Incluye autenticación por tokens (Laravel Sanctum), documentación interactiva con **Swagger / OpenAPI** y manejo consistente de errores en formato JSON.
 
 ## Stack técnico
 
@@ -11,66 +11,31 @@ API RESTful construida con **Laravel 12** para gestionar un e-commerce básico: 
 - `darkaonline/l5-swagger` (documentación OpenAPI 3, con atributos PHP `#[OA\...]`)
 - `stripe/stripe-php` (pasarela de pago)
 
-## ⚠️ Nota importante sobre esta entrega
-
-Este repositorio contiene **todo el código propio de la aplicación** (modelos, migraciones, seeders, controladores, Form Requests, políticas de autorización, rutas y configuración de arranque). Por convención de Laravel, el **esqueleto base del framework** (carpeta `vendor/`, `composer.lock`, archivos de configuración por defecto como `config/app.php`, `config/database.php`, etc., y el resto de archivos que genera `composer create-project`) **no se versiona en Git** y se descarga con Composer al instalar. Por eso el primer paso de la instalación es crear ese esqueleto base y luego copiar sobre él los archivos de este repositorio.
-
 ## Requisitos previos
 
 - PHP >= 8.2 con las extensiones `pdo_mysql`, `openssl`, `mbstring`, `curl`, `json`, `zip`, `fileinfo`
 - Composer 2
-- MySQL 8 (o MariaDB)
+- MySQL 8 o MariaDB (por ejemplo, con XAMPP)
 - Una cuenta de Stripe en modo *test* (gratuita) para las llaves de la pasarela de pago
 
 ## Instalación
 
-### 1. Crear el proyecto base de Laravel 12
+### 1. Clonar el repositorio e instalar dependencias
 
 ```bash
-composer create-project laravel/laravel:^12.0 ecommerce-api
+git clone https://github.com/<usuario>/<repositorio>.git ecommerce-api
 cd ecommerce-api
+composer install
 ```
 
-### 2. Instalar las dependencias adicionales
-
-```bash
-composer require laravel/sanctum stripe/stripe-php darkaonline/l5-swagger
-
-# Publica la configuración de Sanctum, registra el grupo de middleware "api"
-# y crea routes/api.php (todo esto será sobrescrito por el de este repo).
-php artisan install:api
-
-# Publica el archivo de configuración de Swagger.
-php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
-```
-
-### 3. Copiar los archivos de este repositorio sobre el proyecto
-
-Copia (sobrescribiendo cuando se solicite) el contenido de este repositorio dentro de la carpeta `ecommerce-api` recién creada:
-
-```bash
-app/Http/Controllers/Controller.php
-app/Http/Controllers/Api/            (AuthController, ProductController, OrderController, StripeWebhookController)
-app/Http/Requests/                   (RegisterRequest, LoginRequest, StoreProductRequest, UpdateProductRequest, StoreOrderRequest, PayOrderRequest)
-app/Http/Resources/                  (UserResource, ProductResource, OrderResource, OrderItemResource, PaymentResource)
-app/Models/                          (User.php reemplaza al generado por defecto; Product, Order, OrderItem, Payment son nuevos)
-app/Policies/                        (ProductPolicy, OrderPolicy)
-app/Services/                        (StripeService)
-bootstrap/app.php                    (reemplaza al generado por install:api)
-database/migrations/                 (las 5 migraciones nuevas de este repo)
-database/seeders/                    (DatabaseSeeder reemplaza al generado por defecto; UserSeeder y ProductSeeder son nuevos)
-routes/api.php                       (reemplaza al generado por install:api)
-.env.example                         (añade las variables de Stripe y Swagger a tu .env.example existente, o reemplázalo)
-```
-
-> 💡 Las policies (`ProductPolicy`, `OrderPolicy`) se descubren automáticamente por convención de nombres (Laravel 11+); no requieren registro manual en ningún proveedor.
-
-### 4. Configurar el entorno
+### 2. Configurar el entorno
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
+
+En Windows (CMD) el primer comando es `copy .env.example .env`.
 
 Edita `.env` y configura:
 
@@ -83,27 +48,29 @@ Crea la base de datos:
 CREATE DATABASE ecommerce_api CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### 5. Migraciones y seeders
+### 3. Migraciones y seeders
 
 ```bash
 php artisan migrate --seed
 ```
 
-Esto crea las tablas (`users`, `products`, `orders`, `order_items`, `payments`) y las puebla con:
+Esto crea las tablas (`users`, `products`, `orders`, `order_items`, `payments` y `personal_access_tokens`) y las puebla con:
 
 - Un usuario **administrador**: `admin@example.com` / `password123` (puede crear, editar y eliminar productos)
 - Un usuario **cliente**: `cliente@example.com` / `password123`
-- 12 productos de ejemplo en el catálogo
+- 12 productos del catálogo de zapatería
 
-### 6. Generar la documentación Swagger
+Para reiniciar la base de datos con los datos iniciales: `php artisan migrate:fresh --seed`.
+
+### 4. Generar la documentación Swagger
 
 ```bash
 php artisan l5-swagger:generate
 ```
 
-Con `L5_SWAGGER_GENERATE_ALWAYS=true` (ya incluido en `.env.example`) la documentación se regenera automáticamente en cada petición durante el desarrollo, por lo que este paso solo es necesario para producción o si desactivas esa opción.
+Con `L5_SWAGGER_GENERATE_ALWAYS=true` (incluido en `.env.example`) la documentación se regenera automáticamente en cada petición durante el desarrollo, por lo que este paso solo es necesario para producción o si se desactiva esa opción.
 
-### 7. Levantar el servidor
+### 5. Levantar el servidor
 
 ```bash
 php artisan serve
@@ -111,6 +78,10 @@ php artisan serve
 
 - API disponible en: `http://127.0.0.1:8000/api`
 - Documentación Swagger UI en: **`http://127.0.0.1:8000/api/documentation`**
+
+## Frontend
+
+Esta API es consumida por una tienda en Next.js 16 (App Router), que implementa el catálogo, la autenticación con cookie httpOnly, el carrito, el checkout con Stripe y el historial de compras.
 
 ## Autenticación
 
@@ -162,7 +133,7 @@ En Swagger UI: haz clic en **Authorize** e ingresa `Bearer {token}`.
 4. **Completar el pago**, dos formas posibles:
 
    - **Desde un frontend real:** usar el `client_secret` con Stripe.js/Elements o el SDK móvil de Stripe.
-   - **Para probar directamente desde Swagger UI (recomendado para esta evaluación)**, sin necesidad de un frontend:
+   - **Para probar directamente desde Swagger UI**, sin necesidad de un frontend:
 
      ```json
      POST /api/orders/{order}/confirm-payment
@@ -242,17 +213,3 @@ curl -X POST http://127.0.0.1:8000/api/orders/ORDER_ID/confirm-payment \
   -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -H "Accept: application/json" \
   -d '{"payment_method":"pm_card_visa"}'
 ```
-
-## Publicar este repositorio en GitHub
-
-```bash
-cd ecommerce-api
-git init
-git add .
-git commit -m "API de E-commerce Segura con Swagger Completo"
-git branch -M main
-git remote add origin https://github.com/<tu-usuario>/<nombre-del-repo>.git
-git push -u origin main
-```
-
-Recuerda **no subir tu archivo `.env`** (ya está excluido por el `.gitignore` por defecto de Laravel) y verificar que `.env.example` sí quede documentado con todas las variables necesarias, tal como se entrega en este repositorio.
